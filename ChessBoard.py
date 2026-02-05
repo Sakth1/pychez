@@ -43,3 +43,19 @@ class Board(object):
         self.board.loc["8", "E"] = King("black")
 
         print(type(self.board.loc["1", "E"]))
+
+    def GetPositionInfo(self, position: str):
+        rank = position[-1]
+        file = position[-2].capitalize()
+        piece = self.board.loc[rank, file]
+        return {"from_pos": [rank, file], "piece": piece}
+
+    def MovePiece(self, from_pos: str, to_pos: str):
+        CurrentPositionInfo = self.GetPositionInfo(from_pos)
+        MovingPositionInfo = self.GetPositionInfo(to_pos)
+
+        if CurrentPositionInfo["piece"].Move(CurrentPositionInfo["from_pos"], MovingPositionInfo["from_pos"]):
+            self.board.loc[MovingPositionInfo["from_pos"][0], MovingPositionInfo["from_pos"][1]] = CurrentPositionInfo["piece"]
+            self.board.loc[CurrentPositionInfo["from_pos"][0], CurrentPositionInfo["from_pos"][1]] = "."
+
+        print(self.board)        

@@ -5,17 +5,36 @@ from dataclasses import dataclass
 class Pawn(object):
     def __init__(self, color: str):
         self.color = color
+        self.HasMoved = False
+        self._setup_attributes_()
+
+    def _setup_attributes_(self):
+        self.notation = "P" if self.color.lower() in ["w", "white"] else "p"
+        self.MovementDirection = 1 if self.color.lower() in ["w", "white"] else -1
 
     def __repr__(self) -> str:
-        if self.color.lower() in ["w", "white"]:
-            return "P"
-        else:
-            return "p"
+        return self.notation
+    
+    def _get_moving_direction_(self, from_pos: list, to_pos: list):
+        start_idx = from_pos[0]
+        end_idx = to_pos[0]
+        return 1 if start_idx < end_idx else -1
         
+    def Move(self, from_pos: list, to_pos: list) -> bool:
+        if not self._get_moving_direction_(from_pos, to_pos) == self.MovementDirection:
+            return False
+        
+        if abs(int(from_pos[0]) - int(to_pos[0])) > 1 and self.HasMoved:
+            return False
+        
+        self.HasMoved = True
+        return True
+    
 @dataclass
 class King(object):
     def __init__(self, color: str):
         self.color = color
+        self.HasMoved = False
 
     def __repr__(self) -> str:
         if self.color.lower() in ["w", "white"]:
@@ -38,6 +57,7 @@ class Queen(object):
 class Rook(object):
     def __init__(self, color: str):
         self.color = color
+        self.HasMoved = False
 
     def __repr__(self) -> str:
         if self.color.lower() in ["w", "white"]:
