@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import List
+from typing import List, Any
 
 from Pieces import Pawn, Bisshop, Rook, Queen, King, Knight
 
@@ -44,18 +44,15 @@ class Board(object):
 
         print(type(self.board.loc["1", "E"]))
 
-    def GetPositionInfo(self, position: str):
-        rank = position[-1]
-        file = position[-2].capitalize()
-        piece = self.board.loc[rank, file]
-        return {"from_pos": [rank, file], "piece": piece}
+    def GetPiece(self, pos: str) -> Any:
+        return self.board.loc[pos[-1], pos[-2].capitalize()]
 
     def MovePiece(self, from_pos: str, to_pos: str):
-        CurrentPositionInfo = self.GetPositionInfo(from_pos)
-        MovingPositionInfo = self.GetPositionInfo(to_pos)
+        starting_rank = from_pos[-1]
+        starting_file = from_pos[-2].capitalize()
+        piece = self.board.loc[starting_rank, starting_file]
 
-        if CurrentPositionInfo["piece"].Move(CurrentPositionInfo["from_pos"], MovingPositionInfo["from_pos"]):
-            self.board.loc[MovingPositionInfo["from_pos"][0], MovingPositionInfo["from_pos"][1]] = CurrentPositionInfo["piece"]
-            self.board.loc[CurrentPositionInfo["from_pos"][0], CurrentPositionInfo["from_pos"][1]] = "."
+        self.board.loc[starting_rank, starting_file] = "."
+        self.board.loc[to_pos[-1], to_pos[-2].capitalize()] = piece
 
-        print(self.board)        
+        print(self.board)

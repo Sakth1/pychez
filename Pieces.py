@@ -20,14 +20,13 @@ class Pawn(object):
         end_idx = to_pos[0]
         return 1 if start_idx < end_idx else -1
         
-    def Move(self, from_pos: list, to_pos: list) -> bool:
+    def IsMovementValid(self, from_pos: list, to_pos: list) -> bool:
         if not self._get_moving_direction_(from_pos, to_pos) == self.MovementDirection:
             return False
         
         if abs(int(from_pos[0]) - int(to_pos[0])) > 1 and self.HasMoved:
-            return False
+            return False            
         
-        self.HasMoved = True
         return True
     
 @dataclass
