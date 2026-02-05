@@ -15,6 +15,7 @@ class Board(object):
         #pawn setup
         self.board.loc["2", :] = [Pawn("white") for _ in range(8)]
         self.board.loc["7", :] = [Pawn("black") for _ in range(8)]
+        #self.board.loc["3", "E"] = Pawn("w")
         
         #Rook setup
         self.board.loc["1", "A"] = Rook("white")
@@ -51,6 +52,9 @@ class Board(object):
             return type(self.board.loc[str(pos[-1]), str(pos[-2].capitalize())])
         return self.board.loc[pos[-1], pos[-2].capitalize()]
 
+    def SetPiece(self, pos: str, piece: Any):
+        self.board.loc[pos[-1], pos[-2].capitalize()] = piece
+        
     def MovePiece(self, from_pos: str, to_pos: str):
         starting_rank = from_pos[-1]
         starting_file = from_pos[-2].capitalize()

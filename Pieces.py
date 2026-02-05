@@ -22,13 +22,16 @@ class Pawn(object):
         
     def IsMovementValid(self, from_pos: list, to_pos: list) -> bool:
         if not self._get_moving_direction_(from_pos, to_pos) == self.MovementDirection:
-            print("invalid  direction")
-            return False
+            print("invalid direction")
+            return {"Valid": False, "en_passant": False}
         
-        if abs(int(from_pos[-1]) - int(to_pos[-1])) > 1 and self.HasMoved:
-            return False            
+        if abs(int(from_pos[-1]) - int(to_pos[-1])) > 1:
+            if self.HasMoved:
+                return {"Valid": False, "en_passant": False}
+            else:
+                return {"Valid": True, "en_passant": True}
         
-        return True
+        return {"Valid": True, "en_passant": False}
     
 @dataclass
 class King(object):
