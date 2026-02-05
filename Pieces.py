@@ -16,15 +16,16 @@ class Pawn(object):
         return self.notation
     
     def _get_moving_direction_(self, from_pos: list, to_pos: list):
-        start_idx = from_pos[0]
-        end_idx = to_pos[0]
+        start_idx = from_pos[-1]
+        end_idx = to_pos[-1]
         return 1 if start_idx < end_idx else -1
         
     def IsMovementValid(self, from_pos: list, to_pos: list) -> bool:
         if not self._get_moving_direction_(from_pos, to_pos) == self.MovementDirection:
+            print("invalid  direction")
             return False
         
-        if abs(int(from_pos[0]) - int(to_pos[0])) > 1 and self.HasMoved:
+        if abs(int(from_pos[-1]) - int(to_pos[-1])) > 1 and self.HasMoved:
             return False            
         
         return True

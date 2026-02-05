@@ -1,4 +1,10 @@
-from ChessBoard import Board
+from Engine import Chess
 
-board = Board()
-board.MovePiece("e2", "e4")
+chess = Chess()
+chess.Start()
+
+
+while True:
+    from_pos = input("from: ")
+    to_pos = input("to: ")
+    chess.MovePiece(from_pos, to_pos)

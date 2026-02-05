@@ -42,9 +42,13 @@ class Board(object):
         self.board.loc["1", "E"] = King("white")
         self.board.loc["8", "E"] = King("black")
 
-        print(type(self.board.loc["1", "E"]))
+    def DisplayBoard(self):
+        print('\n', self.board, '\n')
 
-    def GetPiece(self, pos: str) -> Any:
+    def GetPiece(self, pos: str, return_type: bool = False) -> Any:
+        print('pos:', pos)
+        if return_type:
+            return type(self.board.loc[str(pos[-1]), str(pos[-2].capitalize())])
         return self.board.loc[pos[-1], pos[-2].capitalize()]
 
     def MovePiece(self, from_pos: str, to_pos: str):
