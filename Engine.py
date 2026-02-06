@@ -89,6 +89,14 @@ class Chess:
     def MoveBishop(self, from_pos: str, to_pos: str, bishop: Bishop):
         pass
 
+    def MoveQueen(self, from_pos: str, to_pos: str, queen: Queen):
+        pass
+
+    def MoveKing(self, from_pos: str, to_pos: str, king: King):
+        pass
+
+    def BuildValidMoveList(self, piece: Piece):
+        movement_pattern = piece.MovementPattern()
     
 
             

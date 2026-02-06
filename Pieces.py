@@ -38,7 +38,7 @@ class Piece:
     def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> Any:
         raise NotImplementedError
 
-    def BuildValidMoves(self):
+    def MovementPattern(self):
         raise NotImplementedError
     
     def GetValidMoves(self) -> list:
@@ -57,7 +57,7 @@ class Pawn(Piece):
     def _GetCurrentMovingDirection(self, FromPos: tuple, ToPos: tuple) -> int:
         return 1 if FromPos[-1] < ToPos[-1] else -1
     
-    def BuildValidMoves(self):
+    def MovementPattern(self):
         pass
 
     def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> dict:
