@@ -34,7 +34,6 @@ class Chess:
 
     def MovePawn(self, from_pos: str, to_pos: str, pawn: Pawn):
         validation_info: dict = pawn.IsMovementValid(from_pos, to_pos)
-        print("\nvalidation info:", validation_info)
         if not validation_info.get("Valid"):
             print("invalid movement")
             return False
@@ -42,30 +41,22 @@ class Chess:
         if from_pos[-2] != to_pos[-2]: #pawn moved to a different file
             if self.board.GetPiece(to_pos, return_type=True) == str: #there is a piece at end position
                 if self.can_en_passant:
-                    print("en passant")
-                    if self.can_en_passant:
-                        self.can_en_passant = False
-                    
-                    self.can_en_passant = validation_info.get("en_passant")
+
                     self.board.MovePiece(from_pos, to_pos)
                     en_passant_pos = to_pos[-2] + str(int(to_pos[-1]) + (pawn.MovementDirection * -1))
-                    print(en_passant_pos)
                     self.board.SetPiece(en_passant_pos, ".")
                     return True
                 
                 else:
-                    print("There is a piece in the way")
+                    print("Cannot move to a different file")
                     return False
 
         pos_in_front = from_pos[0] + str(int(from_pos[1]) + pawn.MovementDirection)
         if self.board.GetPiece(pos_in_front, return_type=True) != str: #there is a piece infront of pawn
             print("there is a piece infront of pawn")
             return False
-
-        if self.can_en_passant:
-            self.can_en_passant = False
         
-        self.can_en_passant = validation_info.get("en_passant")
+        self.can_en_passant = validation_info.get("EnPassant")
         self.board.MovePiece(from_pos, to_pos)
         
         pawn.HasMoved = True
