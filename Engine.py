@@ -1,11 +1,7 @@
-from itertools import cycle
-
 from ChessBoard import Board
 from Pieces import Piece, Pawn
 
 class Chess:
-    Turn = cycle(("WHITE", "BLACK"))
-
     def __init__(self):
         self.board = Board()
         self.current_turn = "WHITE"
@@ -19,15 +15,21 @@ class Chess:
         self.board.DisplayBoard()
 
     def switch_turn(self):
-        self.current_turn = next(self.Turn)
+        self.current_turn = "BLACK" if self.current_turn == "WHITE" else "WHITE"
 
     def MovePiece(self, from_pos: str, to_pos: str):
-        #piece_type = self.board.GetPiece(to_pos, True)
         piece: Piece = self.board.GetPiece(from_pos)
-        piece_color = piece.Color
+
+        if piece.Color != self.current_turn:
+            print("Not your turn")
+            return
+
+        move_successful = False
         if type(piece) == Pawn:
-            if self.MovePawn(from_pos, to_pos, piece):
-                pass
+            move_successful = self.MovePawn(from_pos, to_pos, piece)
+
+        if not move_successful:
+            return
 
         self.switch_turn()
         self.board.DisplayBoard()
@@ -60,6 +62,7 @@ class Chess:
         self.board.MovePiece(from_pos, to_pos)
         
         pawn.HasMoved = True
-        
+        return True
+
 
             
