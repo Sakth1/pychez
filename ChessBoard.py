@@ -1,66 +1,75 @@
-import pandas as pd
-from typing import List, Any
+from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
 
-from Pieces import Pawn, Bishop, Rook, Queen, King, Knight
+def CellNotation(cell) -> str:
+    match cell:
+        case None:
+            return "."
+        case Piece():
+            return cell.Notation
 
-class Board(object):
+class Board:
 
     def __init__(self):
-        self.columns = ["A", "B", "C", "D", "E", "F", "G", "H"]
-        self.index = ["8", "7", "6", "5", "4", "3", "2", "1"]
-        self.board = pd.DataFrame(data=[["."] * 8 for _ in range(8)], dtype=object, index=self.index, columns=self.columns)
+        self.files = ["A","B","C","D","E","F","G","H"]
+        self.ranks = ["8","7","6","5","4","3","2","1"]
+
+        self.grid: list[list[Piece | None]] = [
+            [None for _ in range(8)] for _ in range(8)
+        ]
+
         self.SetupBoard()
 
+    def _PosToIndex(self, pos: str) -> tuple[int, int]:
+        file = pos[0].upper()
+        rank = pos[1]
+
+        row = self.ranks.index(rank)
+        col = self.files.index(file)
+
+        return row, col
+
     def SetupBoard(self):
-        #pawn setup
-        self.board.loc["2", :] = [Pawn("WHITE") for _ in range(8)]
-        self.board.loc["7", :] = [Pawn("BLACK") for _ in range(8)]
-        #self.board.loc["3", "E"] = Pawn("w")
-        
-        #Rook setup
-        self.board.loc["1", "A"] = Rook("WHITE")
-        self.board.loc["1", "H"] = Rook("WHITE")
-        self.board.loc["8", "A"] = Rook("BLACK")
-        self.board.loc["8", "H"] = Rook("BLACK")
+        for f in self.files:
+            self.SetPiece(f + "2", Pawn("WHITE"))
+            self.SetPiece(f + "7", Pawn("BLACK"))
 
-        #Knight setup
-        self.board.loc["1", "B"] = Knight("WHITE")
-        self.board.loc["1", "G"] = Knight("WHITE")
-        self.board.loc["8", "B"] = Knight("BLACK")
-        self.board.loc["8", "G"] = Knight("BLACK")
+        self.SetPiece("A1", Rook("WHITE"))
+        self.SetPiece("H1", Rook("WHITE"))
+        self.SetPiece("A8", Rook("BLACK"))
+        self.SetPiece("H8", Rook("BLACK"))
 
-        #Bishop setup
-        self.board.loc["1", "C"] = Bishop("WHITE")
-        self.board.loc["1", "F"] = Bishop("WHITE")
-        self.board.loc["8", "C"] = Bishop("BLACK")
-        self.board.loc["8", "F"] = Bishop("BLACK")
+        self.SetPiece("B1", Knight("WHITE"))
+        self.SetPiece("G1", Knight("WHITE"))
+        self.SetPiece("B8", Knight("BLACK"))
+        self.SetPiece("G8", Knight("BLACK"))
 
-        #Queen setup
-        self.board.loc["1", "D"] = Queen("WHITE")
-        self.board.loc["8", "D"] = Queen("BLACK")
+        self.SetPiece("C1", Bishop("WHITE"))
+        self.SetPiece("F1", Bishop("WHITE"))
+        self.SetPiece("C8", Bishop("BLACK"))
+        self.SetPiece("F8", Bishop("BLACK"))
 
-        #King setup
-        self.board.loc["1", "E"] = King("WHITE")
-        self.board.loc["8", "E"] = King("BLACK")
+        self.SetPiece("D1", Queen("WHITE"))
+        self.SetPiece("D8", Queen("BLACK"))
+
+        self.SetPiece("E1", King("WHITE"))
+        self.SetPiece("E8", King("BLACK"))
+
+    def GetPiece(self, pos: str) -> Piece | None:
+        r, c = self._PosToIndex(pos)
+        return self.grid[r][c]
+
+    def SetPiece(self, pos: str, piece: Piece | None):
+        r, c = self._PosToIndex(pos)
+        self.grid[r][c] = piece
+
+    def MovePiece(self, from_pos: str, to_pos: str):
+        piece = self.GetPiece(from_pos)
+        self.SetPiece(from_pos, None)
+        self.SetPiece(to_pos, piece)
 
     def DisplayBoard(self):
-        print('\n', self.board, '\n')
-
-    def GetPiece(self, pos: str, return_type: bool = False) -> Any:
-        print('pos:', pos)
-        if return_type:
-            return type(self.board.loc[str(pos[-1]), str(pos[-2].capitalize())])
-        return self.board.loc[pos[-1], pos[-2].capitalize()]
-
-    def SetPiece(self, pos: str, piece: Any):
-        self.board.loc[pos[-1], pos[-2].capitalize()] = piece
-        
-    def MovePiece(self, from_pos: str, to_pos: str):
-        starting_rank = from_pos[-1]
-        starting_file = from_pos[-2].capitalize()
-        piece = self.board.loc[starting_rank, starting_file]
-
-        self.board.loc[starting_rank, starting_file] = "."
-        self.board.loc[to_pos[-1], to_pos[-2].capitalize()] = piece
-
-        print(self.board)
+        print()
+        for r in range(8):
+            row = [CellNotation(self.grid[r][c]) for c in range(8)]
+            print(self.ranks[r], "  ", " ".join(row))
+        print('\n    ', " ".join(self.files), '\n')

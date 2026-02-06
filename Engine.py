@@ -19,28 +19,31 @@ class Chess:
 
     def MovePiece(self, from_pos: str, to_pos: str):
         piece: Piece = self.board.GetPiece(from_pos)
+        if piece is None:
+            print("No piece at source square")
+            return
 
         if piece.Color != self.current_turn:
             print("Not your turn")
             return
 
         move_successful = False
-        match type(piece):
-            case Pawn():
-                move_successful = self.MovePawn(from_pos, to_pos, piece)
-            case Rook():
-                move_successful = self.MoveRook(from_pos, to_pos, piece)
-            case Knight():
-                move_successful = self.MoveKnight(from_pos, to_pos, piece)
-            case Bishop():
-                move_successful = self.MoveBishop(from_pos, to_pos, piece)
-            case Queen():
-                move_successful = self.MoveQueen(from_pos, to_pos, piece)
-            case King():
-                move_successful = self.MoveKing(from_pos, to_pos, piece)
-            case _:
-                print("Invalid piece")
-                return
+        print(f"Moving {type(piece)} from {from_pos} to {to_pos}")
+        if isinstance(piece, Pawn):
+            move_successful = self.MovePawn(from_pos, to_pos, piece)
+        elif isinstance(piece, Rook):
+            move_successful = self.MoveRook(from_pos, to_pos, piece)
+        elif isinstance(piece, Knight):
+            move_successful = self.MoveKnight(from_pos, to_pos, piece)
+        elif isinstance(piece, Bishop):
+            move_successful = self.MoveBishop(from_pos, to_pos, piece)
+        elif isinstance(piece, Queen):
+            move_successful = self.MoveQueen(from_pos, to_pos, piece)
+        elif isinstance(piece, King):
+            move_successful = self.MoveKing(from_pos, to_pos, piece)
+        else:
+            print("Invalid piece")
+            return
 
         if not move_successful:
             return
@@ -55,9 +58,8 @@ class Chess:
             return False
         
         if from_pos[-2] != to_pos[-2]: #pawn moved to a different file
-            if self.board.GetPiece(to_pos, return_type=True) == str: #there is a piece at end position
+            if self.board.GetPiece(to_pos) == None: #there is a piece at end position
                 if self.can_en_passant:
-
                     self.board.MovePiece(from_pos, to_pos)
                     en_passant_pos = to_pos[-2] + str(int(to_pos[-1]) + (pawn.MovementDirection * -1))
                     self.board.SetPiece(en_passant_pos, ".")
@@ -68,7 +70,7 @@ class Chess:
                     return False
 
         pos_in_front = from_pos[0] + str(int(from_pos[1]) + pawn.MovementDirection)
-        if self.board.GetPiece(pos_in_front, return_type=True) != str: #there is a piece infront of pawn
+        if self.board.GetPiece(pos_in_front) != None: #there is a piece infront of pawn
             print("there is a piece infront of pawn")
             return False
         
