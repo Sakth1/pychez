@@ -1,7 +1,7 @@
 from itertools import cycle
 
 from ChessBoard import Board
-from Pieces import Pawn
+from Pieces import Piece, Pawn
 
 class Chess:
     Turn = cycle(("WHITE", "BLACK"))
@@ -23,8 +23,8 @@ class Chess:
 
     def MovePiece(self, from_pos: str, to_pos: str):
         #piece_type = self.board.GetPiece(to_pos, True)
-        piece = self.board.GetPiece(from_pos)
-        piece_color = piece.color
+        piece: Piece = self.board.GetPiece(from_pos)
+        piece_color = piece.Color
         if type(piece) == Pawn:
             if self.MovePawn(from_pos, to_pos, piece):
                 pass
@@ -34,6 +34,7 @@ class Chess:
 
     def MovePawn(self, from_pos: str, to_pos: str, pawn: Pawn):
         validation_info: dict = pawn.IsMovementValid(from_pos, to_pos)
+        print("\nvalidation info:", validation_info)
         if not validation_info.get("Valid"):
             print("invalid movement")
             return False

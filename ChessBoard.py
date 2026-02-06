@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List, Any
 
-from Pieces import Pawn, Bisshop, Rook, Queen, King, Knight
+from Pieces import Pawn, Bishop, Rook, Queen, King, Knight
 
 class Board(object):
 
@@ -30,10 +30,10 @@ class Board(object):
         self.board.loc["8", "G"] = Knight("BLACK")
 
         #Bishop setup
-        self.board.loc["1", "C"] = Bisshop("WHITE")
-        self.board.loc["1", "F"] = Bisshop("WHITE")
-        self.board.loc["8", "C"] = Bisshop("BLACK")
-        self.board.loc["8", "F"] = Bisshop("BLACK")
+        self.board.loc["1", "C"] = Bishop("WHITE")
+        self.board.loc["1", "F"] = Bishop("WHITE")
+        self.board.loc["8", "C"] = Bishop("BLACK")
+        self.board.loc["8", "F"] = Bishop("BLACK")
 
         #Queen setup
         self.board.loc["1", "D"] = Queen("WHITE")

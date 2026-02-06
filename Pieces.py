@@ -1,98 +1,87 @@
-from typing import Any, List, Literal
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Literal
+
+
+COLOR = Literal["WHITE", "BLACK"]
+
+
+def NormalizeColor(color: str) -> COLOR:
+    c = color.strip().upper()
+    if c in ("W", "WHITE"):
+        return "WHITE"
+    if c in ("B", "BLACK"):
+        return "BLACK"
+    raise ValueError(f"Invalid color: {color}")
+
 
 @dataclass
-class Pawn(object):
-    def __init__(self, color: str):
-        self.color = color
-        self.HasMoved = False
-        self._setup_attributes_()
+class Piece:
+    Color: COLOR
+    HasMoved: bool = field(default=False, init=False)
+    Notation: str = field(init=False)
 
-    def _setup_attributes_(self):
-        self.notation = "P" if self.color.upper() in ["W", "WHITE"] else "p" if self.color.upper() in ["B", "BLACK"] else None
-        self.MovementDirection = 1 if self.color.upper() in ["W", "WHITE"] else -1
+    def __post_init__(self):
+        self.Color = NormalizeColor(self.Color)
+        self.Notation = self._BuildNotation()
+
+    # child must define this
+    def BaseLetter(self) -> str:
+        raise NotImplementedError
+
+    def _BuildNotation(self) -> str:
+        letter = self.BaseLetter()
+        return letter.upper() if self.Color == "WHITE" else letter.lower()
 
     def __repr__(self) -> str:
-        return self.notation
-    
-    def _get_moving_direction_(self, from_pos: list, to_pos: list):
-        start_idx = from_pos[-1]
-        end_idx = to_pos[-1]
-        return 1 if start_idx < end_idx else -1
-        
-    def IsMovementValid(self, from_pos: list, to_pos: list) -> bool:
-        if not self._get_moving_direction_(from_pos, to_pos) == self.MovementDirection:
-            print("invalid direction")
-            return {"Valid": False, "en_passant": False}
-        
-        if abs(int(from_pos[-1]) - int(to_pos[-1])) > 1:
+        return self.Notation
+
+
+class Pawn(Piece):
+
+    def BaseLetter(self) -> str:
+        return "p"
+
+    @property
+    def MovementDirection(self) -> int:
+        return 1 if self.Color == "WHITE" else -1
+
+    def _GetMovingDirection(self, FromPos: tuple, ToPos: tuple) -> int:
+        return 1 if FromPos[-1] < ToPos[-1] else -1
+
+    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> dict:
+        if self._GetMovingDirection(FromPos, ToPos) != self.MovementDirection:
+            return {"Valid": False, "EnPassant": False}
+
+        distance = abs(int(FromPos[-1]) - int(ToPos[-1]))
+
+        if distance > 1:
             if self.HasMoved:
-                return {"Valid": False, "en_passant": False}
-            else:
-                return {"Valid": True, "en_passant": True}
-        
-        return {"Valid": True, "en_passant": False}
-    
-@dataclass
-class King(object):
-    def __init__(self, color: str):
-        self.color = color
-        self.HasMoved = False
-        self._setup_attributes_()
+                return {"Valid": False, "EnPassant": False}
+            return {"Valid": True, "EnPassant": True}
 
-    def _setup_attributes_(self):
-        self.notation = "K" if self.color.upper() in ["W", "WHITE"] else "k" if self.color.upper() in ["B", "BLACK"] else None
+        return {"Valid": True, "EnPassant": False}
 
-    def __repr__(self) -> str:
-        return self.notation
-        
-@dataclass
-class Queen(object):
-    def __init__(self, color: str):
-        self.color = color
-        self._setup_attributes_()
 
-    def _setup_attributes_(self):
-        self.notation = "Q" if self.color.upper() in ["W", "WHITE"] else "q" if self.color.upper() in ["B", "BLACK"] else None
+class King(Piece):
+    def BaseLetter(self) -> str:
+        return "k"
 
-    def __repr__(self) -> str:
-        return self.notation
-        
-@dataclass
-class Rook(object):
-    def __init__(self, color: str):
-        self.color = color
-        self.HasMoved = False
-        self._setup_attributes_()
 
-    def _setup_attributes_(self):
-        self.notation = "R" if self.color.upper() in ["W", "WHITE"] else "r" if self.color.upper() in ["B", "BLACK"] else None
+class Queen(Piece):
+    def BaseLetter(self) -> str:
+        return "q"
 
-    def __repr__(self) -> str:
-        return self.notation
-        
-@dataclass
-class Knight(object):
-    def __init__(self, color: str):
-        self.color = color
-        self._setup_attributes_()
 
-    def _setup_attributes_(self):
-        self.notation = "N" if self.color.upper() in ["W", "WHITE"] else "n" if self.color.upper() in ["B", "BLACK"] else None
+class Rook(Piece):
+    def BaseLetter(self) -> str:
+        return "r"
 
-    def __repr__(self) -> str:
-        return self.notation
-        
-@dataclass
-class Bisshop(object):
-    def __init__(self, color: str):
-        self.color = color
-        self._setup_attributes_()
 
-    def _setup_attributes_(self):
-        self.notation = "B" if self.color.upper() in ["W", "WHITE"] else "b" if self.color.upper() in ["B", "BLACK"] else None
+class Knight(Piece):
+    def BaseLetter(self) -> str:
+        return "n"
 
-    def __repr__(self) -> str:
-        return self.notation
 
-    
+class Bishop(Piece):
+    def BaseLetter(self) -> str:
+        return "b"
