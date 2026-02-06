@@ -9,8 +9,8 @@ class Pawn(object):
         self._setup_attributes_()
 
     def _setup_attributes_(self):
-        self.notation = "P" if self.color.lower() in ["w", "white"] else "p"
-        self.MovementDirection = 1 if self.color.lower() in ["w", "white"] else -1
+        self.notation = "P" if self.color.upper() in ["W", "WHITE"] else "p" if self.color.upper() in ["B", "BLACK"] else None
+        self.MovementDirection = 1 if self.color.upper() in ["W", "WHITE"] else -1
 
     def __repr__(self) -> str:
         return self.notation
@@ -38,57 +38,61 @@ class King(object):
     def __init__(self, color: str):
         self.color = color
         self.HasMoved = False
+        self._setup_attributes_()
+
+    def _setup_attributes_(self):
+        self.notation = "K" if self.color.upper() in ["W", "WHITE"] else "k" if self.color.upper() in ["B", "BLACK"] else None
 
     def __repr__(self) -> str:
-        if self.color.lower() in ["w", "white"]:
-            return "K"
-        else:
-            return "k"
+        return self.notation
         
 @dataclass
 class Queen(object):
     def __init__(self, color: str):
         self.color = color
+        self._setup_attributes_()
+
+    def _setup_attributes_(self):
+        self.notation = "Q" if self.color.upper() in ["W", "WHITE"] else "q" if self.color.upper() in ["B", "BLACK"] else None
 
     def __repr__(self) -> str:
-        if self.color.lower() in ["w", "white"]:
-            return "Q"
-        else:
-            return "q"
+        return self.notation
         
 @dataclass
 class Rook(object):
     def __init__(self, color: str):
         self.color = color
         self.HasMoved = False
+        self._setup_attributes_()
+
+    def _setup_attributes_(self):
+        self.notation = "R" if self.color.upper() in ["W", "WHITE"] else "r" if self.color.upper() in ["B", "BLACK"] else None
 
     def __repr__(self) -> str:
-        if self.color.lower() in ["w", "white"]:
-            return "R"
-        else:
-            return "r"
+        return self.notation
         
 @dataclass
 class Knight(object):
     def __init__(self, color: str):
         self.color = color
+        self._setup_attributes_()
+
+    def _setup_attributes_(self):
+        self.notation = "N" if self.color.upper() in ["W", "WHITE"] else "n" if self.color.upper() in ["B", "BLACK"] else None
 
     def __repr__(self) -> str:
-        if self.color.lower() in ["w", "white"]:
-            return "K"
-        else:
-            return "k"
+        return self.notation
         
 @dataclass
 class Bisshop(object):
     def __init__(self, color: str):
         self.color = color
+        self._setup_attributes_()
+
+    def _setup_attributes_(self):
+        self.notation = "B" if self.color.upper() in ["W", "WHITE"] else "b" if self.color.upper() in ["B", "BLACK"] else None
 
     def __repr__(self) -> str:
-        if self.color.lower() in ["w", "white"]:
-            return "B"
-        else:
-            return "b"
-
+        return self.notation
 
     

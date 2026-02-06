@@ -13,35 +13,35 @@ class Board(object):
 
     def SetupBoard(self):
         #pawn setup
-        self.board.loc["2", :] = [Pawn("white") for _ in range(8)]
-        self.board.loc["7", :] = [Pawn("black") for _ in range(8)]
+        self.board.loc["2", :] = [Pawn("WHITE") for _ in range(8)]
+        self.board.loc["7", :] = [Pawn("BLACK") for _ in range(8)]
         #self.board.loc["3", "E"] = Pawn("w")
         
         #Rook setup
-        self.board.loc["1", "A"] = Rook("white")
-        self.board.loc["1", "H"] = Rook("white")
-        self.board.loc["8", "A"] = Rook("black")
-        self.board.loc["8", "H"] = Rook("black")
+        self.board.loc["1", "A"] = Rook("WHITE")
+        self.board.loc["1", "H"] = Rook("WHITE")
+        self.board.loc["8", "A"] = Rook("BLACK")
+        self.board.loc["8", "H"] = Rook("BLACK")
 
         #Knight setup
-        self.board.loc["1", "B"] = Knight("white")
-        self.board.loc["1", "G"] = Knight("white")
-        self.board.loc["8", "B"] = Knight("black")
-        self.board.loc["8", "G"] = Knight("black")
+        self.board.loc["1", "B"] = Knight("WHITE")
+        self.board.loc["1", "G"] = Knight("WHITE")
+        self.board.loc["8", "B"] = Knight("BLACK")
+        self.board.loc["8", "G"] = Knight("BLACK")
 
         #Bishop setup
-        self.board.loc["1", "C"] = Bisshop("white")
-        self.board.loc["1", "F"] = Bisshop("white")
-        self.board.loc["8", "C"] = Bisshop("black")
-        self.board.loc["8", "F"] = Bisshop("black")
+        self.board.loc["1", "C"] = Bisshop("WHITE")
+        self.board.loc["1", "F"] = Bisshop("WHITE")
+        self.board.loc["8", "C"] = Bisshop("BLACK")
+        self.board.loc["8", "F"] = Bisshop("BLACK")
 
         #Queen setup
-        self.board.loc["1", "D"] = Queen("white")
-        self.board.loc["8", "D"] = Queen("black")
+        self.board.loc["1", "D"] = Queen("WHITE")
+        self.board.loc["8", "D"] = Queen("BLACK")
 
         #King setup
-        self.board.loc["1", "E"] = King("white")
-        self.board.loc["8", "E"] = King("black")
+        self.board.loc["1", "E"] = King("WHITE")
+        self.board.loc["8", "E"] = King("BLACK")
 
     def DisplayBoard(self):
         print('\n', self.board, '\n')
