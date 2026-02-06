@@ -1,5 +1,5 @@
 from ChessBoard import Board
-from Pieces import Piece, Pawn
+from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
 
 class Chess:
     def __init__(self):
@@ -25,8 +25,22 @@ class Chess:
             return
 
         move_successful = False
-        if type(piece) == Pawn:
-            move_successful = self.MovePawn(from_pos, to_pos, piece)
+        match type(piece):
+            case Pawn():
+                move_successful = self.MovePawn(from_pos, to_pos, piece)
+            case Rook():
+                move_successful = self.MoveRook(from_pos, to_pos, piece)
+            case Knight():
+                move_successful = self.MoveKnight(from_pos, to_pos, piece)
+            case Bishop():
+                move_successful = self.MoveBishop(from_pos, to_pos, piece)
+            case Queen():
+                move_successful = self.MoveQueen(from_pos, to_pos, piece)
+            case King():
+                move_successful = self.MoveKing(from_pos, to_pos, piece)
+            case _:
+                print("Invalid piece")
+                return
 
         if not move_successful:
             return
@@ -64,5 +78,15 @@ class Chess:
         pawn.HasMoved = True
         return True
 
+    def MoveRook(self, from_pos: str, to_pos: str, rook: Rook):
+        pass
+
+    def MoveKnight(self, from_pos: str, to_pos: str, knight: Knight):
+        pass
+
+    def MoveBishop(self, from_pos: str, to_pos: str, bishop: Bishop):
+        pass
+
+    
 
             

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Literal, Any
 
 
 COLOR = Literal["WHITE", "BLACK"]
@@ -26,6 +26,9 @@ class Piece:
 
     # child must define this
     def BaseLetter(self) -> str:
+        raise NotImplementedError
+    
+    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> Any:
         raise NotImplementedError
 
     def _BuildNotation(self) -> str:
@@ -62,6 +65,16 @@ class Pawn(Piece):
         return {"Valid": True, "EnPassant": False}
 
 
+
+class Rook(Piece):
+    def BaseLetter(self) -> str:
+        return "r"
+    
+    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> dict:
+        #change_in_rank_and_file = FromPos[-1] == ToPos[-1] and FromPos[-2] != ToPos[-2]
+        #if () or (FromPos[-2] == ToPos[-2] and FromPos[-1] != ToPos[-1]):
+        pass
+    
 class King(Piece):
     def BaseLetter(self) -> str:
         return "k"
@@ -70,11 +83,6 @@ class King(Piece):
 class Queen(Piece):
     def BaseLetter(self) -> str:
         return "q"
-
-
-class Rook(Piece):
-    def BaseLetter(self) -> str:
-        return "r"
 
 
 class Knight(Piece):
