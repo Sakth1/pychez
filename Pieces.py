@@ -19,17 +19,11 @@ class Piece:
     Color: COLOR
     HasMoved: bool = field(default=False, init=False)
     Notation: str = field(init=False)
+    ValidMoves: list = field(init=False)
 
     def __post_init__(self):
         self.Color = NormalizeColor(self.Color)
         self.Notation = self._BuildNotation()
-
-    # child must define this
-    def BaseLetter(self) -> str:
-        raise NotImplementedError
-    
-    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> Any:
-        raise NotImplementedError
 
     def _BuildNotation(self) -> str:
         letter = self.BaseLetter()
@@ -37,7 +31,19 @@ class Piece:
 
     def __repr__(self) -> str:
         return self.Notation
+    
+    def BaseLetter(self) -> str:
+        raise NotImplementedError
+    
+    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> Any:
+        raise NotImplementedError
 
+    def BuildValidMoves(self):
+        raise NotImplementedError
+    
+    def GetValidMoves(self) -> list:
+        raise self.ValidMoves
+    
 
 class Pawn(Piece):
 
@@ -48,11 +54,14 @@ class Pawn(Piece):
     def MovementDirection(self) -> int:
         return 1 if self.Color == "WHITE" else -1
 
-    def _GetMovingDirection(self, FromPos: tuple, ToPos: tuple) -> int:
+    def _GetCurrentMovingDirection(self, FromPos: tuple, ToPos: tuple) -> int:
         return 1 if FromPos[-1] < ToPos[-1] else -1
+    
+    def BuildValidMoves(self):
+        pass
 
     def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> dict:
-        if self._GetMovingDirection(FromPos, ToPos) != self.MovementDirection:
+        if self._GetCurrentMovingDirection(FromPos, ToPos) != self.MovementDirection:
             return {"Valid": False, "EnPassant": False}
 
         distance = abs(int(FromPos[-1]) - int(ToPos[-1]))
@@ -74,7 +83,7 @@ class Rook(Piece):
         #change_in_rank_and_file = FromPos[-1] == ToPos[-1] and FromPos[-2] != ToPos[-2]
         #if () or (FromPos[-2] == ToPos[-2] and FromPos[-1] != ToPos[-1]):
         pass
-    
+
 class King(Piece):
     def BaseLetter(self) -> str:
         return "k"
