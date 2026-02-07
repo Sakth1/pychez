@@ -1,4 +1,4 @@
-from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
+from .Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
 
 def CellNotation(cell) -> str:
     match cell:

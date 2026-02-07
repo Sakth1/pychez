@@ -1,5 +1,5 @@
-from ChessBoard import Board
-from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
+from .ChessBoard import Board
+from .Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
 
 class Chess:
     def __init__(self):
@@ -91,4 +91,14 @@ class Chess:
 
     
 
-            
+def main():
+    chess = Chess()
+    chess.Start()
+
+    while True:
+        from_pos = input("from: ")
+        to_pos = input("to: ")
+        chess.MovePiece(from_pos, to_pos)
+
+if __name__ == "__main__":
+    main()
