@@ -1,4 +1,7 @@
-from .Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
+try:
+    from .Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
+except ImportError:
+    from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
 
 def CellNotation(cell) -> str:
     match cell:
@@ -23,8 +26,8 @@ class Board:
         file = pos[0].upper()
         rank = pos[1]
 
-        row = self.ranks.index(rank)
-        col = self.files.index(file)
+        row = self.ranks.index(rank) + 1
+        col = self.files.index(file) + 1
 
         return row, col
 
@@ -56,11 +59,11 @@ class Board:
 
     def GetPiece(self, pos: str) -> Piece | None:
         r, c = self._PosToIndex(pos)
-        return self.grid[r][c]
+        return self.grid[r - 1][c - 1]
 
     def SetPiece(self, pos: str, piece: Piece | None):
         r, c = self._PosToIndex(pos)
-        self.grid[r][c] = piece
+        self.grid[r - 1][c - 1] = piece
 
     def MovePiece(self, from_pos: str, to_pos: str):
         piece = self.GetPiece(from_pos)

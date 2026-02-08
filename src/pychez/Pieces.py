@@ -1,8 +1,22 @@
 from dataclasses import dataclass, field
-from typing import Literal, Any
+from typing import Literal, Any, Tuple, Optional, List
+from enum import Enum, auto
 
 
 COLOR = Literal["WHITE", "BLACK"]
+DIRECTIONS = Tuple[int, int]
+
+
+class MoveKind(Enum):
+    RAY = auto()     # keep going until blocked (rook, bishop, queen)
+    STEP = auto()    # single jumps (king, knight)
+    PAWN = auto()    # special pawn logic
+
+
+@dataclass
+class MovePattern:
+    Kind: MoveKind
+    Directions: Optional[List[DIRECTIONS]] = None
 
 
 def NormalizeColor(color: str) -> COLOR:
@@ -34,11 +48,8 @@ class Piece:
     
     def BaseLetter(self) -> str:
         raise NotImplementedError
-    
-    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> Any:
-        raise NotImplementedError
 
-    def MovementPattern(self):
+    def MovementPattern(self) -> MovePattern:
         raise NotImplementedError
     
     def GetValidMoves(self) -> list:
@@ -53,52 +64,102 @@ class Pawn(Piece):
     @property
     def MovementDirection(self) -> int:
         return 1 if self.Color == "WHITE" else -1
+    
+    def MovementPattern(self) -> MovePattern:
+        return MovePattern(MoveKind.PAWN)
 
     def _GetCurrentMovingDirection(self, FromPos: tuple, ToPos: tuple) -> int:
         return 1 if FromPos[-1] < ToPos[-1] else -1
-    
-    def MovementPattern(self):
-        pass
-
-    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> dict:
-        if self._GetCurrentMovingDirection(FromPos, ToPos) != self.MovementDirection:
-            return {"Valid": False, "EnPassant": False}
-
-        distance = abs(int(FromPos[-1]) - int(ToPos[-1]))
-
-        if distance > 1:
-            if self.HasMoved:
-                return {"Valid": False, "EnPassant": False}
-            return {"Valid": True, "EnPassant": True}
-
-        return {"Valid": True, "EnPassant": False}
-
 
 
 class Rook(Piece):
     def BaseLetter(self) -> str:
         return "r"
     
-    def IsMovementValid(self, FromPos: tuple, ToPos: tuple) -> dict:
-        #change_in_rank_and_file = FromPos[-1] == ToPos[-1] and FromPos[-2] != ToPos[-2]
-        #if () or (FromPos[-2] == ToPos[-2] and FromPos[-1] != ToPos[-1]):
-        pass
+    def MovementPattern(self) -> MovePattern:
+        return MovePattern(
+            MoveKind.RAY,
+            Directions=[
+                (1, 0),   # up
+                (-1, 0),  # down
+                (0, 1),   # right
+                (0, -1)   # left
+            ]
+        )
+    
 
 class King(Piece):
     def BaseLetter(self) -> str:
         return "k"
+    
+    def MovementPattern(self) -> MovePattern:
+        return MovePattern(
+            MoveKind.RAY,
+            Directions=[
+                (1, 0),   # up
+                (-1, 0),  # down
+                (0, 1),   # right
+                (0, -1),  # left
+                (1, 1),   # up-right
+                (1, -1),  # up-left
+                (-1, 1),  # down-right
+                (-1, -1)  # down-left
+            ]
+        )
 
 
 class Queen(Piece):
     def BaseLetter(self) -> str:
         return "q"
+    
+    def MovementPattern(self) -> MovePattern:
+        return MovePattern(
+            MoveKind.RAY,
+            Directions=[
+                (1, 0),   # up
+                (-1, 0),  # down
+                (0, 1),   # right
+                (0, -1),  # left
+                (1, 1),   # up-right
+                (1, -1),  # up-left
+                (-1, 1),  # down-right
+                (-1, -1)  # down-left
+            ]
+        )
 
 
 class Knight(Piece):
     def BaseLetter(self) -> str:
         return "n"
+    
+    def MovementPattern(self) -> MovePattern:
+        return MovePattern(
+            MoveKind.STEP,
+            Directions=[
+                (2, 1),    # up-right
+                (2, -1),   # up-left
+                (-2, 1),   # down-right
+                (-2, -1),  # down-left
+                (1, 2),    # right-up
+                (1, -2),   # right-down
+                (-1, 2),   # left-up
+                (-1, -2),  # left-down
+            ]
+        )
 
 
 class Bishop(Piece):
     def BaseLetter(self) -> str:
         return "b"
+    
+    def MovementPattern(self) -> MovePattern:
+        return MovePattern(
+            MoveKind.RAY,
+            Directions=[
+                (1, 1),    # up-right
+                (1, -1),   # up-left
+                (-1, 1),   # down-right
+                (-1, -1)   # down-left
+            ]
+        )
+
