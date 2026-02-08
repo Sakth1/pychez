@@ -29,10 +29,11 @@ def NormalizeColor(color: str) -> COLOR:
 
 
 @dataclass
-class Piece:
+class BasePiece:
     Color: COLOR
     HasMoved: bool = field(default=False, init=False)
     Notation: str = field(init=False)
+    CurrentPosition: str = field(init=False)
     ValidMoves: list = field(init=False)
 
     def __post_init__(self):
@@ -56,7 +57,7 @@ class Piece:
         raise self.ValidMoves
     
 
-class Pawn(Piece):
+class Pawn(BasePiece):
 
     def BaseLetter(self) -> str:
         return "p"
@@ -72,7 +73,7 @@ class Pawn(Piece):
         return 1 if FromPos[-1] < ToPos[-1] else -1
 
 
-class Rook(Piece):
+class Rook(BasePiece):
     def BaseLetter(self) -> str:
         return "r"
     
@@ -88,7 +89,7 @@ class Rook(Piece):
         )
     
 
-class King(Piece):
+class King(BasePiece):
     def BaseLetter(self) -> str:
         return "k"
     
@@ -108,7 +109,7 @@ class King(Piece):
         )
 
 
-class Queen(Piece):
+class Queen(BasePiece):
     def BaseLetter(self) -> str:
         return "q"
     
@@ -128,7 +129,7 @@ class Queen(Piece):
         )
 
 
-class Knight(Piece):
+class Knight(BasePiece):
     def BaseLetter(self) -> str:
         return "n"
     
@@ -148,7 +149,7 @@ class Knight(Piece):
         )
 
 
-class Bishop(Piece):
+class Bishop(BasePiece):
     def BaseLetter(self) -> str:
         return "b"
     

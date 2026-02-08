@@ -1,17 +1,27 @@
+from dataclasses import dataclass, asdict
 try:
     from .ChessBoard import Board
-    from .Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight, MoveKind, MovePattern
+    from .Pieces import BasePiece, Pawn, Bishop, Rook, Queen, King, Knight, MoveKind, MovePattern
 except ImportError:
     from ChessBoard import Board
-    from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight, MoveKind, MovePattern
+    from Pieces import BasePiece, Pawn, Bishop, Rook, Queen, King, Knight, MoveKind, MovePattern
 
+
+@dataclass
+class MoveRecordTemplate:
+    From: str
+    To: str
+    Piece: BasePiece
+    color: str
+
+    def ToDict(self):
+        return asdict(self)
+    
 class Chess:
     def __init__(self):
-        self.board = Board()
-        self.current_turn = "WHITE"
-        self.check = False
-        self.checkmate = False
-        self.stalemate = False
+        self.board: Board = Board()
+        self.current_turn: str = "WHITE"
+        self.History: list[MoveRecordTemplate] = []
 
     def InBounds(self, row: int, col: int) -> bool:
         return 1 <= row <= 8 and 1 <= col <= 8
@@ -90,7 +100,7 @@ class Chess:
         return moves
     
     def GenerateMoves(self, pos: str) -> list[str]:
-        piece: Piece = self.board.GetPiece(pos)
+        piece: BasePiece = self.board.GetPiece(pos)
         if piece is None:
             return []
 
@@ -115,7 +125,6 @@ class Chess:
                     piece = self.board.GetPiece(self.IndexToPos(row, col))
                     piece.ValidMoves = []
                     piece.ValidMoves.extend(self.GenerateMoves(self.IndexToPos(row, col)))
-                    print('piece: ', piece, 'valid moves: ', piece.ValidMoves)
 
     def Start(self):
         self.board.SetupBoard()
@@ -125,8 +134,11 @@ class Chess:
     def switch_turn(self):
         self.current_turn = "BLACK" if self.current_turn == "WHITE" else "WHITE"
 
-    def MovePiece(self, from_pos: str, to_pos: str):
-        piece: Piece = self.board.GetPiece(from_pos)
+    def MovePiece(self, FromPos: str, ToPos: str):
+        FromPos = FromPos.upper()
+        ToPos = ToPos.upper()
+
+        piece: BasePiece = self.board.GetPiece(FromPos)
         print(piece.ValidMoves)
         if piece is None:
             print("No piece at source square")
@@ -137,16 +149,17 @@ class Chess:
             return
 
         move_successful = False
-        print(f"Moving {type(piece)} from {from_pos} to {to_pos}")
-        to_pos = to_pos[-2].upper() + to_pos[-1]
+        print(f"Moving {type(piece)} from {FromPos} to {ToPos}")
 
-        if to_pos in piece.ValidMoves:
-            self.board.MovePiece(from_pos, to_pos)
+        if ToPos in piece.ValidMoves:
+            self.board.MovePiece(FromPos, ToPos)
             move_successful = True
 
         if not move_successful:
             print("Invalid move")
             return
+        
+        self.History.append(MoveRecordTemplate(FromPos, ToPos, piece, self.current_turn))
 
         self.switch_turn()
         self.board.DisplayBoard()
@@ -158,8 +171,8 @@ def main():
     chess.Start()
 
     while True:
-        from_pos = input("from: ")
-        to_pos = input("to: ")
+        from_pos = input("from: ").upper()
+        to_pos = input("to: ").upper()
         chess.MovePiece(from_pos, to_pos)
 
 if __name__ == "__main__":

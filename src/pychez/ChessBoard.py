@@ -1,13 +1,13 @@
 try:
-    from .Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
+    from .Pieces import BasePiece, Pawn, Bishop, Rook, Queen, King, Knight
 except ImportError:
-    from Pieces import Piece, Pawn, Bishop, Rook, Queen, King, Knight
+    from Pieces import BasePiece, Pawn, Bishop, Rook, Queen, King, Knight
 
 def CellNotation(cell) -> str:
     match cell:
         case None:
             return "."
-        case Piece():
+        case BasePiece():
             return cell.Notation
 
 class Board:
@@ -16,7 +16,7 @@ class Board:
         self.files = ["A","B","C","D","E","F","G","H"]
         self.ranks = ["8","7","6","5","4","3","2","1"]
 
-        self.grid: list[list[Piece | None]] = [
+        self.grid: list[list[BasePiece | None]] = [
             [None for _ in range(8)] for _ in range(8)
         ]
 
@@ -57,13 +57,16 @@ class Board:
         self.SetPiece("E1", King("WHITE"))
         self.SetPiece("E8", King("BLACK"))
 
-    def GetPiece(self, pos: str) -> Piece | None:
+    def GetPiece(self, pos: str) -> BasePiece | None:
         r, c = self._PosToIndex(pos)
         return self.grid[r - 1][c - 1]
 
-    def SetPiece(self, pos: str, piece: Piece | None):
+    def SetPiece(self, pos: str, piece: BasePiece | None):
         r, c = self._PosToIndex(pos)
         self.grid[r - 1][c - 1] = piece
+
+        if piece is not None:
+            piece.CurrentPosition = pos
 
     def MovePiece(self, from_pos: str, to_pos: str):
         piece = self.GetPiece(from_pos)
