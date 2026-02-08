@@ -12,7 +12,6 @@ class MoveRecordTemplate:
     From: str
     To: str
     Piece: BasePiece
-    color: str
 
     def ToDict(self):
         return asdict(self)
@@ -91,6 +90,7 @@ class Chess:
 
         # diagonal captures
         last_move = self.History[-1] if self.History else None
+        print(last_move)
         for side_col in [col - 1, col + 1]:
             if not self.InBounds(one_step_row, side_col):
                 continue
@@ -104,8 +104,10 @@ class Chess:
                 and isinstance(last_move.Piece, Pawn)
                 and last_move.Piece.Color != pawn.Color
             ):
+                #print("last move", last_move)
                 last_from_row, _ = self.board._PosToIndex(last_move.From)
                 last_to_row, last_to_col = self.board._PosToIndex(last_move.To)
+                print("last from row", last_from_row, "last to row", last_to_row, "last to col", last_to_col)
                 if (
                     abs(last_from_row - last_to_row) == 2
                     and last_to_row == row
@@ -137,7 +139,7 @@ class Chess:
     def GenerateValidMoves(self):
         for row in range(1, 9):
             for col in range(1, 9):
-                if self.IsAlly(row, col, self.current_turn):
+                if not self.IsEmpty(row, col):
                     piece = self.board.GetPiece(self.IndexToPos(row, col))
                     piece.ValidMoves = []
                     piece.ValidMoves.extend(self.GenerateMoves(self.IndexToPos(row, col)))
@@ -175,11 +177,20 @@ class Chess:
             print("Invalid move")
             return
         
-        self.History.append(MoveRecordTemplate(FromPos, ToPos, piece, self.current_turn))
+        self.History.append(MoveRecordTemplate(FromPos, ToPos, piece))
 
         self.switch_turn()
-        self.board.DisplayBoard()
+        #self.board.DisplayBoard()
         self.GenerateValidMoves()
+        
+
+    def _simulate_(self):
+        self.Start()
+        self.MovePiece("E2", "E4")
+        self.MovePiece("D7", "D5")
+        self.MovePiece("F2", "F4")
+        self.MovePiece("D5", "D4")
+        print(self.board.GetPiece("E4").ValidMoves)
 
     def PlayInCLI(self):
         self.Start()
@@ -193,7 +204,7 @@ class Chess:
 
 def main():
     chess = Chess()
-    chess.PlayInCLI()
+    chess._simulate_()
 
 
 if __name__ == "__main__":
