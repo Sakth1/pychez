@@ -90,12 +90,28 @@ class Chess:
                 moves.append(self.IndexToPos(two_step_row, col))
 
         # diagonal captures
+        last_move = self.History[-1] if self.History else None
         for side_col in [col - 1, col + 1]:
-            if self.InBounds(one_step_row, side_col) and \
-            self.IsEnemy(one_step_row, side_col, pawn.Color):
+            if not self.InBounds(one_step_row, side_col):
+                continue
+
+            if self.IsEnemy(one_step_row, side_col, pawn.Color):
                 moves.append(self.IndexToPos(one_step_row, side_col))
 
-        # TODO: en passant
+            elif (
+                self.IsEmpty(one_step_row, side_col)
+                and last_move is not None
+                and isinstance(last_move.Piece, Pawn)
+                and last_move.Piece.Color != pawn.Color
+            ):
+                last_from_row, _ = self.board._PosToIndex(last_move.From)
+                last_to_row, last_to_col = self.board._PosToIndex(last_move.To)
+                if (
+                    abs(last_from_row - last_to_row) == 2
+                    and last_to_row == row
+                    and last_to_col == side_col
+                ):
+                    moves.append(self.IndexToPos(one_step_row, side_col))
 
         return moves
     
@@ -164,16 +180,21 @@ class Chess:
         self.switch_turn()
         self.board.DisplayBoard()
         self.GenerateValidMoves()
+
+    def PlayInCLI(self):
+        self.Start()
+        while True:
+            print(f"Turn: {self.current_turn}")
+            FromPos = input("From: ")
+            print(self.board.GetPiece(FromPos).ValidMoves)
+            ToPos = input("To: ")
+            self.MovePiece(FromPos, ToPos)
     
 
 def main():
     chess = Chess()
-    chess.Start()
+    chess.PlayInCLI()
 
-    while True:
-        from_pos = input("from: ").upper()
-        to_pos = input("to: ").upper()
-        chess.MovePiece(from_pos, to_pos)
 
 if __name__ == "__main__":
     main()
